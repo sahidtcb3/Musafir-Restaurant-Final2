@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Models\SiteSetting;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,12 +20,19 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        try {
-    View::share('site_settings', SiteSetting::first());
-} catch (\Exception $e) {
-    View::share('site_settings', null);
+
+public function boot(): void
+{
+    if (env('APP_ENV') === 'production') {
+        URL::forceScheme('https');
+    }
+
+    try {
+        View::share('site_settings', SiteSetting::first());
+    } catch (\Exception $e) {
+        View::share('site_settings', null);
+    }
 }
+       
     }
 }
